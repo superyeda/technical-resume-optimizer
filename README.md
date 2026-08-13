@@ -1,10 +1,10 @@
 # technical-resume-optimizer ｜ 技术岗简历优化与生成
 
 > 一个面向技术岗位的简历生成与优化技能。它坚持“只写有证据的事实”——简历中的每个项目、数字、技术都能回溯到你的工作区源码或明确确认，从根上杜绝 AI 编造经历。
-> 基于**可追溯真实证据**生成、评分与优化技术岗简历的 WorkBuddy 技能（Skill）。
+> 基于**可追溯真实证据**生成、评分与优化技术岗简历的通用 Agent Skill（Agent 技能）。
 > 支持后端、前端、全栈、移动端、测试、数据、算法/机器学习、AI Agent、DevOps/SRE、云原生、安全、嵌入式等岗位。
 
-[![Skill](https://img.shields.io/badge/WorkBuddy-Skill-2f6fed)](https://www.codebuddy.cn)
+[![Skill](https://img.shields.io/badge/Agent-Skill-2f6fed)](https://github.com/superyeda/technical-resume-optimizer)
 [![License](https://img.shields.io/badge/License-MIT-green)](#license)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
 
@@ -31,21 +31,27 @@
 
 ## 快速开始
 
-### 安装（作为 WorkBuddy 技能）
+### 安装（作为通用 Agent Skill）
 
-将本仓库克隆到 WorkBuddy 用户级技能目录：
+本技能遵循通用 Agent Skill 结构（`SKILL.md` 主文件 + `references/` 参考文档 + `scripts/` 脚本 + `assets/` 模板），可运行在支持 Skills 机制的任意 AI Agent 中，如 Claude Code、Cursor、CodeBuddy / WorkBuddy 等。
+
+将本仓库克隆到目标 Agent 的技能目录：
 
 ```bash
-# macOS / Linux
-git clone https://github.com/<your-org>/technical-resume-optimizer.git \
-  ~/.workbuddy/skills/technical-resume-optimizer
+# Claude Code（macOS / Linux）
+git clone https://github.com/superyeda/technical-resume-optimizer.git \
+  ~/.claude/skills/technical-resume-optimizer
 
-# Windows
-git clone https://github.com/<your-org>/technical-resume-optimizer.git \
+# Cursor（macOS / Linux）
+git clone https://github.com/superyeda/technical-resume-optimizer.git \
+  ~/.cursor/skills/technical-resume-optimizer
+
+# WorkBuddy（Windows）
+git clone https://github.com/superyeda/technical-resume-optimizer.git \
   %USERPROFILE%\.workbuddy\skills\technical-resume-optimizer
 ```
 
-在 WorkBuddy 对话中输入：
+在 Agent 对话中输入（以 WorkBuddy 为例）：
 
 ```
 /technical-resume-optimizer 帮我生成一份求职简历
@@ -165,7 +171,7 @@ technical-resume-optimizer/
 - 纯 Python 脚本（标准库，零依赖）
 - HTML/CSS（内联样式，双模板）
 - YAML（Resume IR）/ JSON（来源清单）
-- 与 WorkBuddy 技能框架无缝集成，无需任何环境配置
+- 平台无关：不依赖任何特定 Agent 框架 API，仅用文件读写与标准 Python，开箱即用
 
 ## 贡献
 
