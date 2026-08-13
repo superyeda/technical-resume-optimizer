@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>张三 - Java 后端开发工程师</title>
+<style>
+:root { --ink:#111827; --muted:#4b5563; --line:#d1d5db; --accent:#1d4ed8; }
+* { box-sizing:border-box; }
+body { margin:0; background:#fff; color:var(--ink); font:10.5pt/1.58 "Microsoft YaHei","PingFang SC",Arial,sans-serif; }
+.page { width:100%; max-width:180mm; margin:0 auto; }
+h1 { margin:0; font-size:23pt; letter-spacing:0; }
+h2 { margin:16pt 0 7pt; padding-bottom:3pt; border-bottom:1pt solid var(--accent); font-size:13pt; color:var(--accent); }
+p { margin:4pt 0; }.muted { color:var(--muted); }.header { border-bottom:2pt solid var(--accent); padding-bottom:8pt; }
+.meta { margin-top:3pt; color:var(--muted); }.role { margin-top:6pt; font-weight:700; }
+.item { margin:9pt 0; break-inside:avoid; }.item-title { font-weight:700; }.date { float:right; color:var(--muted); }
+ul { margin:4pt 0 0; padding-left:18pt; }li { margin:3pt 0; }.stack { color:var(--muted); font-size:9.5pt; }
+.skills p { margin:3pt 0; }.label { display:inline-block; min-width:80pt; font-weight:700; }
+@page { size:A4; margin:14mm 15mm; }
+@media print { .page{max-width:none}.item,h2{break-inside:avoid;page-break-inside:avoid} }
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="header">
+    <h1>张三</h1>
+    <p class="meta">18888888888 ｜ 123@qq.com ｜ 北京 / 上海 / 深圳 / 广州 / 杭州</p>
+    <p class="role">求职意向：Java 后端开发工程师（校招应届生，2027 届硕士）</p>
+  </header>
+  <section><h2>教育经历</h2>
+    <div class="item">
+      <div class="item-title">清华大学 · 计算科学与技术 · 硕士 <span class="date">2027 届</span></div>
+      <p class="muted">预计 2027 年毕业</p>
+    </div>
+    <div class="item">
+      <div class="item-title">北京大学 · 人工智能 · 本科</div>
+    </div>
+  </section>
+  <section><h2>项目经历</h2>
+    <div class="item">
+      <div class="item-title">拼团营销系统 group-buy-market（个人实战项目）<span class="date">2025.12 - 2026.06</span></div>
+      <p class="stack">Java 8 ｜ Spring Boot 2.7.12 ｜ MyBatis ｜ MySQL 8 ｜ Redis / Redisson 3.26 ｜ RabbitMQ</p>
+      <ul>
+        <li><strong>DDD 三域建模与全链路交付</strong>：按 DDD 划分 activity（活动/折扣）、trade（交易）、tag（人群标签）三个领域，设计并实现活动试算 → 锁单 → 支付回调 → 结算 → 组队通知完整业务链路，交付 6 个 Maven 模块、10 张数据库表、3 个 RPC 接口、4 个 Controller 与 17 个业务测试类。</li>
+        <li><strong>策略路由树支撑营销试算</strong>：基于策略路由树实现活动试算链路（Root → SwitchNode 降级切量 → TagNode 人群标签 → MarketNode 折扣计算 → EndNode），以策略模式实现满减/直减/折扣等优惠计算，支持营销规则灵活配置。</li>
+        <li><strong>责任链 + 分布式锁保障并发一致性</strong>：实现锁单与结算责任链过滤（活动可用性、用户参与次数、结算规则等），通过 bizId 唯一索引保证幂等，使用 Redisson RLock 分布式锁保障并发场景下的数据一致性。</li>
+        <li><strong>MQ 异步通知与补偿兜底</strong>：基于 RabbitMQ TOPIC 实现组队成功事件异步通知（EventPublisher + TeamSuccessTopicListener），设计 notify_task 任务表与 @Scheduled 每日补偿调度，保障回调通知不丢失。</li>
+        <li><strong>自研 Redis 动态配置中心</strong>：基于 Redis Pub/Sub 实现 @DCCValue 注解 + BeanPostProcessor + RTopic 监听热更新 Bean 字段，支持降级、切量、黑名单等配置动态下发，无需重启服务。</li>
+      </ul>
+    </div>
+    <div class="item">
+      <div class="item-title">AI Agent 编排框架 ai-agent-scaffold-lite（个人实战项目）<span class="date">2025.07 - 2025.11</span></div>
+      <p class="stack">Java 17 ｜ Spring Boot 3.4.3 ｜ Spring AI 1.1.0-M3 ｜ Google ADK 0.5.0 ｜ MyBatis ｜ MySQL 8</p>
+      <ul>
+        <li><strong>配置驱动的 Agent 编排框架</strong>：基于 Google ADK + Spring AI 设计配置驱动的 Agent 编排框架，抽象 Loop / Parallel / Sequential 三类 Agent 执行节点，支持配置化装载并动态注册为 Spring Bean，交付 6 个 Maven 模块、4 个对外 API（配置列表/建会话/对话/流式）。</li>
+        <li><strong>六层责任链装载器解耦装配链路</strong>：实现 armory 装载器责任链策略树（Root → AiApi → ChatModel → Agent → Workflow → Runner 六层节点），将 API 构建、模型构建、工具注入、Agent 运行编排逐层解耦，节点可插拔扩展。</li>
+        <li><strong>三种 MCP 客户端统一接入</strong>：封装 SSE / Stdio / Local 三种 MCP 客户端工厂与技能装载器，为 Agent 统一接入外部工具与数据源。</li>
+        <li><strong>流式对话与多会话管理</strong>：基于 InMemoryRunner + Flowable 实现流式对话接口（chat_stream SSE），使用 ConcurrentHashMap 管理多会话，支持同步与流式两种对话模式。</li>
+      </ul>
+    </div>
+  </section>
+  <section class="skills"><h2>专业技能</h2>
+    <p><span class="label">编程语言</span>Java（17 / 8）、SQL</p>
+    <p><span class="label">框架</span>Spring Boot、Spring AI、Google ADK、MyBatis</p>
+    <p><span class="label">数据与中间件</span>MySQL 8、Redis / Redisson、RabbitMQ、Guava Cache</p>
+    <p><span class="label">架构与设计</span>DDD 分层架构、Maven 多模块、策略模式、责任链模式、模板方法、策略路由树</p>
+    <p><span class="label">AI 领域</span>Agent 编排（Loop / Parallel / Sequential）、MCP 协议客户端（SSE / Stdio / Local）、工具调用与技能装载、OpenAI 兼容模型接入</p>
+    <p><span class="label">工程能力</span>Git、SSE 流式协议、单元测试</p>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,144 @@
+{
+  "manifest_version": 1,
+  "generated_at": "2026-08-13T23:25:00+08:00",
+  "candidate": "张三",
+  "target_role": "Java 后端开发工程师",
+  "scanned_workspace": "D:\\desktop\\Javaing\\xfg\\project",
+  "scanned_dirs": [
+    "ai-agent-scaffold-lite",
+    "group-buy-market"
+  ],
+  "excluded": [
+    "*/target/*",
+    "*/node_modules/*",
+    "*.log",
+    "*.key",
+    "*.pem",
+    "*application*.yml（含密钥）"
+  ],
+  "sources": [
+    {
+      "id": "src-001",
+      "path": "ai-agent-scaffold-lite/pom.xml",
+      "kind": "构建配置",
+      "key_facts": [
+        "Spring Boot 3.4.3",
+        "Java 17",
+        "MyBatis 3.0.4",
+        "MySQL 8.0.28",
+        "Guava 32.1.3",
+        "Google ADK 0.5.0（google-adk/spring-ai 集成）",
+        "LangChain4j 1.4.0（测试接入）"
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "src-002",
+      "path": "ai-agent-scaffold-lite/ai-agent-scaffold-lite-domain/src/main/java/cn/bugstack/ai/domain/agent",
+      "kind": "领域源码",
+      "key_facts": [
+        "AgentTypeEnum：Loop/Parallel/Sequential 三类 Agent",
+        "ArmoryService → DefaultArmoryFactory 装载器",
+        "责任链策略树：RootNode→AiApiNode→ChatModelNode→AgentNode→AgentWorkflowNode→RunnerNode",
+        "AbstractArmorySupport 基于自研 AbstractMultiThreadStrategyRouter",
+        "DefaultMcpClientFactory：SSE/Stdio/Local 三种 MCP 客户端",
+        "DefaultToolSkillsCreateService 技能装载",
+        "ChatService 基于 ConcurrentHashMap 管理会话，InMemoryRunner 流式输出"
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "src-003",
+      "path": "ai-agent-scaffold-lite/ai-agent-scaffold-lite-api/src/main/java/cn/bugstack/ai/api",
+      "kind": "接口层源码",
+      "key_facts": [
+        "IAgentService：配置列表/建会话/对话/流式 4 类接口",
+        "chat_stream SSE 流式接口"
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "src-004",
+      "path": "ai-agent-scaffold-lite/docs/dev-ops/mysql/sql/xfg-frame-archetype.sql",
+      "kind": "数据库脚本",
+      "key_facts": ["3 张表（Agent 配置相关）"],
+      "confidence": "high"
+    },
+    {
+      "id": "src-005",
+      "path": "group-buy-market/pom.xml",
+      "kind": "构建配置",
+      "key_facts": [
+        "Spring Boot 2.7.12",
+        "Java 8",
+        "MyBatis 2.1.4",
+        "MySQL 8.0.22",
+        "Redisson 3.26.0",
+        "RabbitMQ (spring-boot-starter-amqp)",
+        "OKHttp SSE 3.14.9",
+        "Guava 32.1.3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "src-006",
+      "path": "group-buy-market/docs/dev-ops/mysql/sql/2-15-group_buy_market.sql",
+      "kind": "数据库脚本",
+      "key_facts": ["10 张表，覆盖活动/折扣/交易/标签/通知任务等"],
+      "confidence": "high"
+    },
+    {
+      "id": "src-007",
+      "path": "group-buy-market/group-buy-market-domain/src/main/java/cn/bugstack/domain",
+      "kind": "领域源码",
+      "key_facts": [
+        "activity/trade/tag 三域划分",
+        "试算策略树：Root→SwitchNode（降级切量）→TagNode（人群）→MarketNode（折扣）→EndNode",
+        "TradeLockOrderService 责任链：ActivityUsabilityRuleFilter/UserTakeLimitRuleFilter",
+        "TradeSettlementOrderService：SCRuleFilter 等 4 节点结算责任链",
+        "TradePort 使用 Redisson RLock 分布式锁",
+        "bizId 唯一索引防重复建团/入团",
+        "策略模式：MJ 满减/ZJ 直减/ZK 折扣/N 无优惠",
+        "模板方法：AbstractDiscountCalculateService",
+        "责任链：BusinessLinkedList/LinkArmory",
+        "策略路由树：AbstractStrategyRouter",
+        "GroupBuyNotifyJob：每日 @Scheduled 补偿回调"
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "src-008",
+      "path": "group-buy-market/group-buy-market-app/src/main/java/cn/bugstack/config/DCCValueBeanFactory.java",
+      "kind": "应用层源码",
+      "key_facts": [
+        "@DCCValue 注解 + BeanPostProcessor 实现字段热更新",
+        "RTopic 监听 Redis Pub/Sub 配置变更",
+        "DCC 配置：降级/切量/黑名单"
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "src-009",
+      "path": "group-buy-market/group-buy-market-infrastructure",
+      "kind": "基础设施源码",
+      "key_facts": [
+        "EventPublisher 持久化消息发布",
+        "TeamSuccessTopicListener TOPIC 监听组队成功事件",
+        "11 个 DAO 接口",
+        "GroupBuyNotifyService 回调网关"
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "src-010",
+      "path": "group-buy-market/group-buy-market-app/src/test/java/cn/bugstack/test",
+      "kind": "测试源码",
+      "key_facts": ["17 个业务测试类，覆盖活动/交易/标签/trigger/基础设施"],
+      "confidence": "high"
+    }
+  ],
+  "unused_materials": [
+    "ai-agent-scaffold-lite/target/ 目录（构建产物，跳过）",
+    "两个项目的 docs/ 目录仅含脚手架模板 README（无独立业务文档，未采用）"
+  ]
+}

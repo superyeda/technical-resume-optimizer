@@ -1,0 +1,251 @@
+schema_version: 1
+candidate:
+  name: "张三"
+  contact:
+    phone: "18888888888"
+    email: "123@qq.com"
+    location: "一线城市（北上广深杭）"
+  target_roles:
+    - "Java 后端开发工程师"
+  target_locations:
+    - "北京 / 上海 / 深圳 / 广州 / 杭州"
+  language: zh-CN
+  identity: "校招应届生（2027 届硕士）"
+education:
+  - id: edu-001
+    school: "清华大学"
+    major: "计算科学与技术（待确认：标准专业名通常为计算机科学与技术）"
+    degree: "硕士"
+    start: ""
+    end: "2027 届（预计 2027 年毕业，具体年月待补充）"
+    gpa: ""
+    evidence:
+      - source: "用户对话明确提供"
+        quote: "清华大学，计算科学与技术"
+    confidence: high
+  - id: edu-002
+    school: "北京大学"
+    major: "人工智能"
+    degree: "本科"
+    start: ""
+    end: ""
+    evidence:
+      - source: "用户对话明确提供"
+        quote: "北京大学，人工智能"
+    confidence: high
+experiences: []
+projects:
+  - id: proj-001
+    name: "ai-agent-scaffold-lite（AI Agent 编排框架）"
+    role: "个人学习/实战项目（独立开发）"
+    start: "2025-07"
+    end: "2025-11"
+    tech_stack:
+      - "Java 17"
+      - "Spring Boot 3.4.3"
+      - "Spring AI 1.1.0-M3"
+      - "Google ADK 0.5.0"
+      - "MyBatis"
+      - "MySQL 8"
+      - "Guava"
+    bullets:
+      - id: bullet-001
+        situation: "需要将多种 Agent 编排方式与模型/工具接入能力统一到一个可配置框架"
+        action: "基于 Google ADK + Spring AI 设计配置驱动的 Agent 编排框架，抽象 Loop / Parallel / Sequential 三类 Agent 执行节点，支持配置化装载并动态注册为 Spring Bean"
+        highlight: "配置驱动的 Agent 编排框架"
+        technology: [ "Google ADK", "Spring AI", "Agent 编排" ]
+        result: "完成 6 个 Maven 模块、4 个对外 API 接口（配置列表/建会话/对话/流式）"
+        metrics:
+          - value: "6"
+            unit: "Maven 模块"
+            grade: B
+          - value: "4"
+            unit: "对外 API 接口"
+            grade: B
+          - value: "3"
+            unit: "Agent 编排类型（Loop/Parallel/Sequential）"
+            grade: B
+        ownership: individual
+        evidence:
+          - source_file: "ai-agent-scaffold-lite/pom.xml"
+            quote: "spring-boot-starter-parent 3.4.3；google-adk 0.5.0"
+          - source_file: "ai-agent-scaffold-lite-domain/.../model/valobj/enums/AgentTypeEnum.java"
+            quote: "定义 Loop/Parallel/Sequential Agent 类型"
+        confidence: high
+      - id: bullet-002
+        situation: "Agent 从配置到运行的装配链路复杂，需解耦各环节"
+        action: "实现 armory 装载器责任链策略树（Root → AiApi → ChatModel → Agent → Workflow → Runner 六层节点），将 API 构建、模型构建、工具注入、Agent 运行编排逐层解耦，节点可插拔扩展"
+        highlight: "六层责任链装载器解耦装配链路"
+        technology: [ "责任链模式", "策略路由树", "Spring 容器" ]
+        result: "支持 RunnerNode 将配置化的 AiAgentRegisterVO 动态注册为 Bean，实现配置驱动装载"
+        metrics: []
+        ownership: individual
+        evidence:
+          - source_file: "ai-agent-scaffold-lite-domain/.../service/armory/AbstractArmorySupport.java"
+            quote: "基于自研 AbstractMultiThreadStrategyRouter 构建策略路由树"
+          - source_file: "ai-agent-scaffold-lite-domain/.../service/armory/node/RunnerNode.java"
+            quote: "registerBean 动态注册 Agent Bean"
+        confidence: high
+      - id: bullet-003
+        situation: "Agent 需要接入外部工具与数据源"
+        action: "封装 SSE / Stdio / Local 三种 MCP 客户端工厂（DefaultMcpClientFactory）与技能装载器（ToolSkillsCreateService），为 Agent 统一接入外部工具"
+        highlight: "三种 MCP 客户端统一接入"
+        technology: [ "MCP 协议", "SSE", "Stdio" ]
+        result: "Agent 可通过配置选择 MCP 接入方式，扩展工具调用能力"
+        metrics: []
+        ownership: individual
+        evidence:
+          - source_file: "ai-agent-scaffold-lite-domain/.../mcp/client/factory/DefaultMcpClientFactory.java"
+            quote: "支持 SSE/Stdio/Local 三种客户端"
+        confidence: high
+      - id: bullet-004
+        situation: "对话场景需要流式输出与多会话并发管理"
+        action: "基于 InMemoryRunner + Flowable 实现流式对话接口（chat_stream SSE），使用 ConcurrentHashMap 管理多会话"
+        highlight: "流式对话与多会话管理"
+        technology: [ "SSE", "Reactive Streams" ]
+        result: "提供同步与流式两种对话模式"
+        metrics: []
+        ownership: individual
+        evidence:
+          - source_file: "ai-agent-scaffold-lite-domain/.../agent/service/ChatService.java"
+            quote: "ConcurrentHashMap 管理会话；InMemoryRunner.runAsync 流式输出"
+        confidence: high
+  - id: proj-002
+    name: "group-buy-market（拼团营销系统）"
+    role: "个人学习/实战项目（独立开发）"
+    start: "2025-12"
+    end: "2026-06"
+    tech_stack:
+      - "Java 8"
+      - "Spring Boot 2.7.12"
+      - "MyBatis"
+      - "MySQL 8"
+      - "Redis / Redisson 3.26"
+      - "RabbitMQ"
+      - "OKHttp"
+    bullets:
+      - id: bullet-005
+        situation: "拼团营销核心链路复杂：活动试算、锁单、支付、结算、组队通知"
+        action: "按 DDD 划分 activity（活动/折扣）/ trade（交易）/ tag（人群标签）三个领域，设计实现 活动试算 → 锁单 → 支付回调 → 结算 → 组队通知 完整业务链路"
+        highlight: "DDD 三域建模与全链路交付"
+        technology: [ "DDD", "Spring Boot" ]
+        result: "交付 6 个 Maven 模块、10 张表、3 个 RPC 接口、4 个 Controller、17 个业务测试类"
+        metrics:
+          - value: "6"
+            unit: "Maven 模块"
+            grade: B
+          - value: "10"
+            unit: "数据库表"
+            grade: B
+          - value: "3"
+            unit: "RPC 接口"
+            grade: B
+          - value: "4"
+            unit: "Controller"
+            grade: B
+          - value: "17"
+            unit: "业务测试类"
+            grade: B
+        ownership: individual
+        evidence:
+          - source_file: "group-buy-market/docs/dev-ops/mysql/sql/2-15-group_buy_market.sql"
+            quote: "数据库脚本（10 张表）"
+          - source_file: "group-buy-market-api/.../api/IMarketTradeService.java"
+            quote: "RPC 接口定义"
+        confidence: high
+      - id: bullet-006
+        situation: "活动试算需要灵活的降级、切量与多折扣策略"
+        action: "基于策略路由树实现试算链路（Root → SwitchNode 降级切量 → TagNode 人群标签 → MarketNode 折扣计算 → EndNode），以策略模式实现满减/直减/折扣等优惠计算"
+        highlight: "策略路由树支撑营销试算"
+        technology: [ "策略路由树", "策略模式", "模板方法" ]
+        result: "支持营销规则热配置与多种优惠组合"
+        metrics: []
+        ownership: individual
+        evidence:
+          - source_file: "group-buy-market-domain/.../activity/.../AbstractStrategyRouter.java"
+            quote: "策略路由树实现"
+          - source_file: "group-buy-market-domain/.../activity/.../AbstractDiscountCalculateService.java"
+            quote: "模板方法 + 策略模式计算折扣"
+        confidence: high
+      - id: bullet-007
+        situation: "锁单与结算需防重复、防超卖、防并发"
+        action: "实现锁单/结算责任链过滤（活动可用性、用户参与次数、结算规则等），通过 bizId 唯一索引保证幂等，使用 Redisson RLock 分布式锁保证并发安全"
+        highlight: "责任链 + 分布式锁保障并发一致性"
+        technology: [ "责任链模式", "Redisson 分布式锁", "唯一索引幂等" ]
+        result: "保障锁单与结算在并发场景下的数据一致性"
+        metrics: []
+        ownership: individual
+        evidence:
+          - source_file: "group-buy-market-domain/.../trade/service/TradeLockOrderService.java"
+            quote: "责任链过滤 ActivityUsabilityRuleFilter/UserTakeLimitRuleFilter"
+          - source_file: "group-buy-market-domain/.../trade/adapter/port/TradePort.java"
+            quote: "Redisson RLock 分布式锁"
+        confidence: high
+      - id: bullet-008
+        situation: "组队成功回调通知需可靠投递"
+        action: "基于 RabbitMQ TOPIC 实现组队成功事件异步通知（EventPublisher + TeamSuccessTopicListener），设计 notify_task 任务表 + @Scheduled 每日补偿调度，保障回调不丢失"
+        highlight: "MQ 异步通知与补偿兜底"
+        technology: [ "RabbitMQ", "异步消息", "定时补偿" ]
+        result: "实现回调通知的异步化与最终一致"
+        metrics: []
+        ownership: individual
+        evidence:
+          - source_file: "group-buy-market-infrastructure/.../mq/EventPublisher.java"
+            quote: "持久化消息发布"
+          - source_file: "group-buy-market-domain/.../job/GroupBuyNotifyJob.java"
+            quote: "每日 @Scheduled 补偿回调"
+        confidence: high
+      - id: bullet-009
+        situation: "营销配置需要动态调整（降级/切量/黑名单）而无需重启服务"
+        action: "自研基于 Redis Pub/Sub 的动态配置中心：实现 @DCCValue 注解 + DCCValueBeanFactory（BeanPostProcessor + RTopic 监听）热更新 Bean 字段，提供降级、切量、黑名单等 DCC 配置能力"
+        highlight: "自研 Redis 动态配置中心"
+        technology: [ "Redis Pub/Sub", "BeanPostProcessor", "注解" ]
+        result: "实现配置热更新与动态降级，无需重启应用"
+        metrics: []
+        ownership: individual
+        evidence:
+          - source_file: "group-buy-market-app/.../config/DCCValueBeanFactory.java"
+            quote: "基于 Redis 实现动态配置中心；RTopic 监听热更新"
+        confidence: high
+skills:
+  languages:
+    - "Java（17 / 8）"
+    - "SQL"
+  frameworks:
+    - "Spring Boot"
+    - "Spring AI"
+    - "Google ADK"
+    - "MyBatis"
+  databases_middleware:
+    - "MySQL 8"
+    - "Redis / Redisson"
+    - "RabbitMQ"
+    - "Guava Cache"
+  cloud_engineering:
+    - "Maven 多模块"
+    - "Git"
+    - "Docker（了解）"
+    - "SSE 流式协议"
+  ai_domain:
+    - "Agent 编排（Loop / Parallel / Sequential）"
+    - "MCP 协议客户端（SSE / Stdio / Local）"
+    - "工具调用与技能装载"
+    - "OpenAI 兼容模型接入"
+source_snapshot:
+  - path: "ai-agent-scaffold-lite/"
+    scope: "AI Agent 编排框架（DDD 六模块）"
+    scanned_at: "2026-08-13"
+  - path: "group-buy-market/"
+    scope: "拼团营销系统（DDD 六模块）"
+    scanned_at: "2026-08-13"
+open_questions:
+  - "教育经历起止年月未提供，简历暂只写届次（2027 届硕士），待补充"
+  - "硕士专业名'计算科学与技术'疑似笔误，标准名称为'计算机科学与技术'，待确认后替换"
+  - "本科就读时间未提供（未写起止年月）"
+  - "两个项目的开始/结束时间按用户提供顺序分配（ai-agent-scaffold-lite: 2025.07–2025.11；group-buy-market: 2025.12–2026.06），如对应关系相反请告知"
+  - "是否有实习经历、证书、竞赛奖项、GitHub 主页待补充"
+conflicts: []
+versions:
+  current: v1
+  parent: null
+  generated_at: "2026-08-13"

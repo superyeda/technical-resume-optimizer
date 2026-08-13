@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{name}} - {{target_role}}</title>
+<style>
+:root { --ink:#1f2937; --muted:#64748b; --blue:#155e75; --teal:#0f766e; --soft:#f0fdfa; --line:#cbd5e1; }
+* { box-sizing:border-box; } body { margin:0; background:#f1f5f9; color:var(--ink); font:10.5pt/1.58 "Microsoft YaHei","PingFang SC",Arial,sans-serif; }
+.page { max-width:190mm; margin:14pt auto; padding:18mm 17mm; background:#fff; box-shadow:0 2pt 12pt rgba(15,23,42,.12); }
+header { display:flex; justify-content:space-between; gap:18pt; align-items:flex-end; padding:0 0 10pt; border-bottom:3pt solid var(--teal); }
+h1 { margin:0; font-size:26pt; letter-spacing:0; color:#0f172a; }.subtitle { margin:4pt 0 0; color:var(--teal); font-weight:700; }.contact { text-align:right; color:var(--muted); font-size:9.5pt; }
+h2 { margin:17pt 0 8pt; font-size:13pt; color:var(--blue); letter-spacing:0; }.summary { padding:9pt 11pt; background:var(--soft); border-left:3pt solid var(--teal); }.item { margin:10pt 0; break-inside:avoid; }.item-head { display:flex; justify-content:space-between; gap:12pt; font-weight:700; }.date { color:var(--teal); white-space:nowrap; }.stack { margin-top:2pt; color:var(--muted); font-size:9.5pt; }ul { margin:5pt 0; padding-left:17pt; }li { margin:3pt 0; }.skill { margin:3pt 0; }.label { color:var(--blue); font-weight:700; display:inline-block; min-width:84pt; }
+@page { size:A4; margin:14mm 15mm; } @media print { body{background:#fff}.page{margin:0;padding:0;box-shadow:none;max-width:none}.item,h2{break-inside:avoid;page-break-inside:avoid} }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <div><h1>{{name}}</h1><p class="subtitle">{{target_role}}</p></div>
+    <div class="contact">{{phone}}<br>{{email}}<br>{{location}}</div>
+  </header>
+  <section><h2>职业摘要</h2><div class="summary">{{summary}}</div></section>
+  <section><h2>实习 / 工作经历</h2>{{experience_items}}</section>
+  <section><h2>项目经历</h2>{{project_items}}</section>
+  <section><h2>专业技能</h2>{{skill_items}}</section>
+  <section><h2>教育经历</h2>{{education_items}}</section>
+</main>
+</body>
+</html>
