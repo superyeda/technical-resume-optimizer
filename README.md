@@ -84,6 +84,10 @@ source_manifest_vN.json                   # 来源清单（版本化）
 
 > 以下示例为演示数据（姓名、联系方式、教育背景均为占位），演示「从工作区生成简历」的完整产出。
 
+**现代视觉版效果预览：**
+
+![Demo 简历 · 现代视觉版](docs/images/demo-resume-modern.png)
+
 📁 [examples/demo-java-backend/](examples/demo-java-backend/)
 
 | 文件 | 说明 |
