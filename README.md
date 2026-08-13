@@ -84,9 +84,16 @@ source_manifest_vN.json                   # 来源清单（版本化）
 
 > 以下示例为演示数据（姓名、联系方式、教育背景均为占位），演示「从工作区生成简历」的完整产出。
 
-| 现代视觉版 | ATS 单列版 |
-| :---: | :---: |
-| ![现代视觉版](docs/images/demo-resume-modern.png) | ![ATS 单列版](docs/images/demo-resume-ats.png) |
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/demo-resume-modern.png" height="480" alt="现代视觉版预览"></td>
+    <td align="center"><img src="docs/images/demo-resume-ats.png" height="480" alt="ATS 单列版预览"></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>现代视觉版</strong></td>
+    <td align="center"><strong>ATS 单列版</strong></td>
+  </tr>
+</table>
 
 📁 [examples/demo-java-backend/](examples/demo-java-backend/)
 
