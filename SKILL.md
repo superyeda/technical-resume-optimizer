@@ -48,6 +48,7 @@ agent_created: true
 6. 输出 Markdown、ATS HTML、现代 HTML 与评估报告；执行 `scripts/validate_resume_output.py` 校验。
 7. 确认证件照需求：询问用户是否放置证件照（现代版默认放右上角、ATS 版默认不放）；用户提供照片路径时，将图片 base64 内嵌进 HTML 的 `{{photo_html}}` 占位；用户选择不放或未提供路径时输出空占位。
 8. 确认页数约束：生成后检查打印页数（可在浏览器打开 HTML 按 Ctrl+P 预览或运行 `scripts/check_resume_pages.py`），若超过 2 页，先压缩字体/行距（见「页数控制」），仍超页时向用户提供选择：A. 增加页数（最多 3 页）B. 压缩内容（裁剪次要 bullet 或合并短条目），按用户选择调整后重新输出。
+9. 交付后默认启动微调器并打开 `http://localhost:<port>`（见「微调器」章节第 4 条），把链接随交付物一起提供给用户。
 
 ### 场景 B：从工作区生成简历
 
@@ -61,6 +62,7 @@ agent_created: true
 6. 确认问题后，按目标岗位选择相应 `references/role-profiles/` 指南，构建 Resume IR 并生成交付物。
 7. 在评估报告中增加“证据覆盖表”和“未采用材料清单”。
 8. 执行页数检查与证件照渲染（同场景 A 第 7、8 步）。
+9. 交付后默认启动微调器并打开 `http://localhost:<port>`（见「微调器」章节第 4 条），把链接随交付物一起提供给用户。
 
 ### 场景 C：增量更新简历
 
@@ -123,22 +125,22 @@ versions:
 - 用户提供照片路径时：用 base64 编码（png/jpg，建议压缩至 ≤200 KB、3:4 或 2:3 比例）填充模板 `{{photo_html}}`；未提供或选择不放时输出空字符串。
 - 证件照不承载关键信息，ATS 版不放照片以保兼容；现代版照片区域样式见 `assets/html-modern-template.html`。
 
-## 微调器（本地实时调整，可选）
+## 微调器（本地实时调整，交付后默认打开）
 
-生成简历后，可启动本地微调器，让用户在浏览器里实时调整内容、字号、间距、主题色、模板与证件照，并导出或写回。
+生成简历后，**默认自动启动本地微调器并在浏览器打开**，让用户在交付页面上直接实时调整内容、字号、间距、主题色、模板与证件照，并导出或写回。
 
 1. 用 `scripts/ir_to_editor_json.py` 把当前 Resume IR 转成微调器数据 `resume.json`：
    ```bash
    python scripts/ir_to_editor_json.py resume_ir_v1.yaml --output <outputs>/editor/resume.json
    ```
    若环境无 PyYAML，可先安装到虚拟环境，或手动把 IR 的关键字段填入 `assets/editor/demo-resume.json` 的结构。
-2. 启动本地服务并告知用户链接（默认 8618）：
+2. 启动本地服务（默认 8618）：
    ```bash
    python scripts/serve_resume_editor.py <skill>/assets/editor --data <outputs>/editor/resume.json --output <outputs> --port 8618
    ```
    服务路由：`GET /` 编辑器、`GET /resume.json` 数据、`POST /save` 写回 outputs（生成 `姓名-微调版.json/.html`）。
 3. 微调器能力：左侧滑块调字号/行高/栏目间距/条目间距/bullet 间距/页边距；主题色取色器；模板切换（现代/ATS，带真实视觉差异）；证件照上传（自动压缩至最长边 400px）与移除；点击任意文字直接编辑（含姓名/电话/邮箱/地址）；页数实时估算；导出 HTML / PDF / 写回。
-4. 默认不自动启动：在最终交付回复中告知用户「如需微调，可运行 `python scripts/serve_resume_editor.py ...` 打开微调器」，由用户决定。
+4. **默认行为**：交付完成后自动启动微调器（后台运行服务），并把 `http://localhost:8618` 作为交付链接提供给用户打开；若端口被占用则顺延（8619、8620…）并在回复中说明实际端口。用户主动选择不使用（如只要静态文件）时才跳过。
 5. 微调器只改呈现层（措辞/排版/样式），不改事实；写回时在评估报告追加「用户手动微调」记录，保持可追溯。
 
 ## 资源选择
