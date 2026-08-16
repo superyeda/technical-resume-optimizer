@@ -79,6 +79,17 @@ input[type=color] { width: 32px; height: 24px; border: 1px solid var(--border); 
 [contenteditable] { outline: none; }
 [contenteditable]:hover { background: #fef7e0; }
 [contenteditable]:focus { background: #fff7d6; box-shadow: 0 0 0 1px #f0c000; }
+
+/* ===== 打印：仅输出简历 A4，隐藏控制面板 ===== */
+@page { size: A4; margin: 12mm 14mm; }
+@media print {
+  body { background: #fff; }
+  .topbar, .panel, .page-indicator { display: none !important; }
+  .layout { display: block; min-height: 0; }
+  .preview-wrap { display: block; padding: 0; }
+  .preview { width: auto !important; min-height: 0 !important; padding: 0 !important; box-shadow: none !important; }
+  .preview .item, .preview h2 { break-inside: avoid; page-break-inside: avoid; }
+}
 </style>
 </head>
 <body>
