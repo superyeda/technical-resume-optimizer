@@ -27,6 +27,7 @@
 - 🖨️ **一键导出 PDF**：两份 HTML 内置「导出 PDF」悬浮按钮（浏览器打印，打印时自动隐藏），A4 打印样式齐全
 - 📏 **页数自动控制**：内置紧凑排版（10pt / 1.5 行高），生成后自动检查打印页数（`check_resume_pages.py`），默认控制在 2 页内；超页时先压缩间距字号，仍装不下则由用户选择「增加页数（最多 3 页）」或「压缩内容」
 - 🖼️ **证件照可选**：生成前询问是否放置证件照，现代版默认右上角展示（base64 内嵌）、ATS 版默认不放以保纯文本兼容
+- 🎛️ **本地微调器**：生成后可启动本地服务，在浏览器实时调内容、字号、间距、主题色、模板、证件照，导出或写回（`serve_resume_editor.py` + `ir_to_editor_json.py`）
 - 📈 **指标覆盖**：优先量化吞吐、性能、稳定性、成本、效率、质量、交付范围与业务影响
 - ✍️ **可扫描性**：项目 bullet 句首加简练加粗总结（highlight），HR 3 秒看懂核心价值
 - 🔄 **增量协议**：保留全部历史版本，新证据只更新对应章节，不擅自改动措辞强度
@@ -66,6 +67,20 @@ git clone https://github.com/superyeda/technical-resume-optimizer.git \
 | A 优化已有简历 | 「帮我优化这份 PDF 简历，目标岗位是 Java 后端」 | 精修稿 + 评分报告 |
 | B 从工作区生成 | 「根据这个项目文件夹生成简历」 | 全新简历 + 证据覆盖表 |
 | C 增量更新 | 「我新做了个实习项目，更新简历」 | 新版本 + 增量变更报告 |
+
+### 本地微调器（可选）
+
+生成简历后，可在浏览器里实时微调再导出：
+
+```bash
+# 1. 把 Resume IR 转成微调器数据
+python scripts/ir_to_editor_json.py resume_ir_v1.yaml --output <outputs>/editor/resume.json
+
+# 2. 启动本地服务（默认 http://localhost:8618）
+python scripts/serve_resume_editor.py assets/editor --data <outputs>/editor/resume.json --output <outputs> --port 8618
+```
+
+支持：左侧滑块实时调字号/行高/间距/页边距、主题色、模板切换（现代/ATS）、证件照上传（自动压缩）、点击任意文字直接编辑、页数实时提示，最后**导出 HTML / PDF** 或**写回 outputs**。
 
 ## 交付物
 
@@ -139,11 +154,16 @@ technical-resume-optimizer/
 ├── assets/
 │   ├── html-ats-single-column-template.html   # ATS 模板
 │   ├── html-modern-template.html              # 现代模板
-│   └── css/print-a4.css                       # A4 打印样式
+│   ├── css/print-a4.css                       # A4 打印样式
+│   └── editor/                                # 本地微调器
+│       ├── index.html                         # 编辑器单页（预览 + 控制面板）
+│       └── demo-resume.json                   # 微调器示例数据
 ├── scripts/
 │   ├── scan_workspace_manifest.py    # 工作区只读扫描
 │   ├── validate_resume_output.py     # 交付物完整性校验
-│   └── check_resume_pages.py         # A4 打印页数检查（自动探测 Chrome/Edge）
+│   ├── check_resume_pages.py         # A4 打印页数检查（自动探测 Chrome/Edge）
+│   ├── ir_to_editor_json.py          # Resume IR → 微调器 resume.json 转换
+│   └── serve_resume_editor.py        # 本地微调器服务
 └── examples/
     └── demo-java-backend/            # 完整示例产出
 ```

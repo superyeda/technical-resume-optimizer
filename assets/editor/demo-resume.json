@@ -1,0 +1,136 @@
+{
+  "basics": {
+    "name": "张三",
+    "title": "Java 后端开发工程师 · 校招应届生（2027 届硕士）",
+    "phone": "18888888888",
+    "email": "123@qq.com",
+    "location": "北京 / 上海 / 深圳 / 广州 / 杭州",
+    "photo": ""
+  },
+  "sections": [
+    {
+      "id": "education",
+      "title": "教育经历",
+      "visible": true,
+      "items": [
+        {
+          "heading": "清华大学 · 计算科学与技术 · 硕士",
+          "subheading": "预计 2027 年毕业",
+          "date": "2027 届",
+          "bullets": []
+        },
+        {
+          "heading": "北京大学 · 人工智能 · 本科",
+          "subheading": "",
+          "date": "",
+          "bullets": []
+        }
+      ]
+    },
+    {
+      "id": "projects",
+      "title": "项目经历",
+      "visible": true,
+      "items": [
+        {
+          "heading": "拼团营销系统 group-buy-market（个人实战项目）",
+          "subheading": "Java 8 ｜ Spring Boot 2.7.12 ｜ MyBatis ｜ MySQL 8 ｜ Redis / Redisson 3.26 ｜ RabbitMQ",
+          "date": "2025.12 - 2026.06",
+          "bullets": [
+            {
+              "highlight": "DDD 三域建模与全链路交付",
+              "text": "按 DDD 划分 activity / trade / tag 三个领域，设计并实现活动试算 → 锁单 → 支付回调 → 结算 → 组队通知完整业务链路，交付 6 个 Maven 模块、10 张数据库表、3 个 RPC 接口、4 个 Controller 与 17 个业务测试类。"
+            },
+            {
+              "highlight": "策略路由树支撑营销试算",
+              "text": "基于策略路由树实现活动试算链路，以策略模式实现满减 / 直减 / 折扣等优惠计算，支持营销规则灵活配置。"
+            },
+            {
+              "highlight": "责任链 + 分布式锁保障并发一致性",
+              "text": "实现锁单与结算责任链过滤，通过 bizId 唯一索引保证幂等，使用 Redisson RLock 分布式锁保障并发场景下的数据一致性。"
+            },
+            {
+              "highlight": "MQ 异步通知与补偿兜底",
+              "text": "基于 RabbitMQ TOPIC 实现组队成功事件异步通知，设计 notify_task 任务表与定时补偿调度，保障回调通知不丢失。"
+            },
+            {
+              "highlight": "自研 Redis 动态配置中心",
+              "text": "基于 Redis Pub/Sub 实现 @DCCValue 注解热更新 Bean 字段，支持降级、切量、黑名单等配置动态下发，无需重启服务。"
+            }
+          ]
+        },
+        {
+          "heading": "AI Agent 编排框架 ai-agent-scaffold-lite（个人实战项目）",
+          "subheading": "Java 17 ｜ Spring Boot 3.4.3 ｜ Spring AI 1.1.0-M3 ｜ Google ADK 0.5.0 ｜ MyBatis ｜ MySQL 8",
+          "date": "2025.07 - 2025.11",
+          "bullets": [
+            {
+              "highlight": "配置驱动的 Agent 编排框架",
+              "text": "基于 Google ADK + Spring AI 设计配置驱动的 Agent 编排框架，抽象 Loop / Parallel / Sequential 三类执行节点，交付 6 个 Maven 模块、4 个对外 API。"
+            },
+            {
+              "highlight": "六层责任链装载器解耦装配链路",
+              "text": "实现 armory 装载器责任链策略树，将 API 构建、模型构建、工具注入、Agent 运行编排逐层解耦，节点可插拔扩展。"
+            },
+            {
+              "highlight": "三种 MCP 客户端统一接入",
+              "text": "封装 SSE / Stdio / Local 三种 MCP 客户端工厂与技能装载器，为 Agent 统一接入外部工具与数据源。"
+            },
+            {
+              "highlight": "流式对话与多会话管理",
+              "text": "基于 InMemoryRunner + Flowable 实现流式对话接口，使用 ConcurrentHashMap 管理多会话。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "title": "专业技能",
+      "visible": true,
+      "items": [
+        {
+          "heading": "",
+          "subheading": "",
+          "date": "",
+          "bullets": [
+            {
+              "highlight": "编程语言",
+              "text": "Java（17 / 8）、SQL"
+            },
+            {
+              "highlight": "框架",
+              "text": "Spring Boot、Spring AI、Google ADK、MyBatis"
+            },
+            {
+              "highlight": "数据与中间件",
+              "text": "MySQL 8、Redis / Redisson、RabbitMQ、Guava Cache"
+            },
+            {
+              "highlight": "架构与设计",
+              "text": "DDD 分层架构、Maven 多模块、策略模式、责任链模式、模板方法"
+            },
+            {
+              "highlight": "AI 领域",
+              "text": "Agent 编排、MCP 协议客户端、工具调用与技能装载"
+            },
+            {
+              "highlight": "工程能力",
+              "text": "Git、SSE 流式协议、单元测试"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "style": {
+    "fontSize": 10,
+    "lineHeight": 1.5,
+    "sectionGap": 13,
+    "itemGap": 8,
+    "bulletGap": 3,
+    "pagePadding": 15,
+    "accent": "#0f766e",
+    "template": "modern"
+  }
+}

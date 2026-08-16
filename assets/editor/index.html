@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>简历微调器 · 原型</title>
+<style>
+:root {
+  --panel-bg: #f5f6f8;
+  --card-bg: #ffffff;
+  --border: #e2e4e8;
+  --text: #1f2937;
+  --muted: #64748b;
+  --accent: #0f766e;
+  --blue: #155e75;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Microsoft YaHei","PingFang SC",Arial,sans-serif; background: var(--panel-bg); color: var(--text); }
+.topbar { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--card-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
+.topbar .logo { font-weight: 700; font-size: 15px; }
+.topbar .hint { color: var(--muted); font-size: 12px; }
+.topbar .spacer { flex: 1; }
+.btn { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: #fff; cursor: pointer; font-size: 13px; }
+.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn:hover { border-color: #b9bec7; }
+.layout { display: flex; min-height: calc(100vh - 52px); }
+.panel { width: 280px; flex-shrink: 0; background: var(--card-bg); border-right: 1px solid var(--border); padding: 16px; overflow-y: auto; }
+.panel h3 { margin: 0 0 10px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.group { margin-bottom: 20px; }
+.row { margin-bottom: 12px; }
+.row label { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 4px; }
+.row label .val { color: var(--accent); font-weight: 600; }
+input[type=range] { width: 100%; }
+input[type=color] { width: 32px; height: 24px; border: 1px solid var(--border); border-radius: 4px; padding: 0; background: #fff; }
+.seg { display: flex; gap: 6px; }
+.seg button { flex: 1; padding: 6px; font-size: 12px; border: 1px solid var(--border); background: #fff; border-radius: 6px; cursor: pointer; }
+.seg button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.photo-ctrl { display: flex; gap: 8px; align-items: center; }
+.photo-ctrl .btn { flex: 1; padding: 6px 8px; font-size: 12px; text-align: center; }
+.photo-thumb { width: 44px; height: 58px; object-fit: cover; border: 1px solid var(--border); border-radius: 4px; display: none; }
+.preview-wrap { flex: 1; padding: 24px; overflow: auto; display: flex; justify-content: center; align-items: flex-start; }
+.preview { width: 794px; min-height: 1123px; background: #fff; padding: 42px 44px; box-shadow: 0 2px 12px rgba(15,23,42,.14); }
+.page-indicator { text-align: center; color: var(--muted); font-size: 12px; margin-top: 12px; }
+
+/* ===== 简历预览：现代版（默认） ===== */
+.resume { color: #1f2937; }
+.resume header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; border-bottom: 3px solid var(--accent); padding-bottom: 8px; margin-bottom: 4px; }
+.resume .name { font-size: 23pt; color: #0f172a; margin: 0; }
+.resume .subtitle { color: var(--accent); font-weight: 700; margin: 4px 0 0; }
+.resume .contact { text-align: right; color: var(--muted); font-size: 9pt; }
+.resume .head-left { flex: 1; min-width: 0; }
+.resume .contact-inline { color: var(--muted); font-size: 9pt; margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.resume .photo { width: 92px; height: 120px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border); display: block; flex-shrink: 0; align-self: flex-start; }
+.resume h2 { font-size: 12.5pt; color: var(--blue); margin: var(--section-gap) 0 6px; }
+.resume .item { margin-bottom: var(--item-gap); }
+.resume .item-head { display: flex; justify-content: space-between; gap: 12px; font-weight: 700; }
+.resume .item-head .date { color: var(--accent); white-space: nowrap; }
+.resume .stack { color: var(--muted); font-size: 9pt; margin-top: 2px; }
+.resume ul { margin: 4px 0 0; padding-left: 16px; }
+.resume li { margin: var(--bullet-gap) 0; }
+.resume li strong { font-weight: 700; }
+
+/* ===== 简历预览：ATS 单列版 ===== */
+.resume.tpl-ats header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-bottom: 2px solid #111827; padding-bottom: 8px; text-align: left; }
+.resume.tpl-ats .head-main { flex: 1; min-width: 0; }
+.resume.tpl-ats .name { font-size: 20pt; }
+.resume.tpl-ats .subtitle { color: #111827; font-weight: 600; margin-top: 2px; }
+.resume.tpl-ats .contact { color: #4b5563; font-size: 9.5pt; margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.resume.tpl-ats .contact br { display: none; }
+.resume.tpl-ats .photo { width: 76px; height: 100px; border-radius: 2px; flex-shrink: 0; align-self: flex-start; }
+.resume.tpl-ats h2 { color: #111827; border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; }
+.resume.tpl-ats .item-head .date { color: #4b5563; }
+
+[contenteditable] { outline: none; }
+[contenteditable]:hover { background: #fef7e0; }
+[contenteditable]:focus { background: #fff7d6; box-shadow: 0 0 0 1px #f0c000; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="logo">简历微调器</span>
+  <span class="hint">点击右侧任意文字可直接编辑 · 左侧实时调排版</span>
+  <span class="spacer"></span>
+  <button class="btn" onclick="exportHTML()">导出 HTML</button>
+  <button class="btn" onclick="window.print()">导出 PDF</button>
+  <button class="btn primary" onclick="saveBack()">写回 outputs</button>
+</div>
+
+<div class="layout">
+  <aside class="panel">
+    <div class="group">
+      <h3>排版</h3>
+      <div class="row"><label>字号 <span class="val" id="v-font">10 pt</span></label><input type="range" id="font" min="8" max="12" step="0.5" value="10" oninput="setStyle('fontSize',+this.value,'v-font','pt')"></div>
+      <div class="row"><label>行高 <span class="val" id="v-lh">1.50</span></label><input type="range" id="lh" min="1.2" max="1.7" step="0.05" value="1.5" oninput="setStyle('lineHeight',+this.value,'v-lh','')"></div>
+      <div class="row"><label>栏目间距 <span class="val" id="v-secgap">13 pt</span></label><input type="range" id="secgap" min="8" max="24" step="1" value="13" oninput="setStyle('sectionGap',+this.value,'v-secgap','pt')"></div>
+      <div class="row"><label>条目间距 <span class="val" id="v-itemgap">8 pt</span></label><input type="range" id="itemgap" min="4" max="16" step="1" value="8" oninput="setStyle('itemGap',+this.value,'v-itemgap','pt')"></div>
+      <div class="row"><label>bullet 间距 <span class="val" id="v-bgap">3 pt</span></label><input type="range" id="bgap" min="1" max="8" step="0.5" value="3" oninput="setStyle('bulletGap',+this.value,'v-bgap','pt')"></div>
+      <div class="row"><label>页边距 <span class="val" id="v-pad">15 mm</span></label><input type="range" id="pad" min="10" max="24" step="1" value="15" oninput="setStyle('pagePadding',+this.value,'v-pad','mm')"></div>
+    </div>
+    <div class="group">
+      <h3>样式</h3>
+      <div class="row"><label>主题色 <input type="color" id="accent" value="#0f766e" oninput="setStyle('accent',this.value,null,'')"></label></div>
+      <div class="row">
+        <label>模板</label>
+        <div class="seg">
+          <button id="tpl-modern" class="active" onclick="setTemplate('modern')">现代</button>
+          <button id="tpl-ats" onclick="setTemplate('ats')">ATS</button>
+        </div>
+      </div>
+      <div class="row">
+        <label>证件照</label>
+        <div class="photo-ctrl">
+          <button class="btn" onclick="$('#photoInput').click()">上传</button>
+          <button class="btn" onclick="removePhoto()">移除</button>
+          <img class="photo-thumb" id="photoThumb" alt="">
+          <input type="file" id="photoInput" accept="image/png,image/jpeg" style="display:none" onchange="onPhotoChange(this)">
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <h3>页数</h3>
+      <p style="font-size:13px;color:var(--muted);margin:0;" id="page-info">估算中…</p>
+    </div>
+  </aside>
+
+  <div class="preview-wrap">
+    <div>
+      <div class="preview" id="preview"></div>
+      <p class="page-indicator" id="page-indicator"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+let data = null;
+const $ = s => document.querySelector(s);
+
+async function load() {
+  const r = await fetch('resume.json');
+  data = await r.json();
+  const tpl = new URLSearchParams(location.search).get('tpl');
+  if (tpl === 'ats' || tpl === 'modern') data.style.template = tpl;
+  $('#tpl-modern').classList.toggle('active', data.style.template !== 'ats');
+  $('#tpl-ats').classList.toggle('active', data.style.template === 'ats');
+  applyStyle();
+  render();
+}
+
+function setStyle(key, value, labelId, suffix) {
+  data.style[key] = value;
+  if (labelId) { $('#'+labelId).textContent = value + (suffix ? ' ' + suffix : ''); }
+  applyStyle();
+}
+
+function applyStyle() {
+  const s = data.style;
+  const pv = $('#preview');
+  pv.style.fontSize = s.fontSize + 'pt';
+  pv.style.lineHeight = s.lineHeight;
+  pv.style.setProperty('--section-gap', s.sectionGap + 'px');
+  pv.style.setProperty('--item-gap', s.itemGap + 'px');
+  pv.style.setProperty('--bullet-gap', s.bulletGap + 'px');
+  pv.style.padding = (s.pagePadding * 2.83) + 'px ' + (s.pagePadding * 2.83) + 'px';
+  pv.style.setProperty('--accent', s.accent);
+  $('#accent').value = s.accent;
+  updatePhotoThumb();
+  estimatePages();
+}
+
+function setTemplate(t) {
+  data.style.template = t;
+  $('#tpl-modern').classList.toggle('active', t==='modern');
+  $('#tpl-ats').classList.toggle('active', t==='ats');
+  render();
+}
+
+function onPhotoChange(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  // 前端压缩：最长边 400px，JPEG 质量 0.85，避免巨大 base64 撑版
+  compressImage(file, 400, 0.85).then(dataUrl => {
+    data.basics.photo = dataUrl;
+    updatePhotoThumb();
+    render();
+  });
+  input.value = '';
+}
+
+function compressImage(file, maxSide, quality) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = e => { img.onload = () => {
+      let { width, height } = img;
+      if (width > maxSide || height > maxSide) {
+        if (width >= height) { height = Math.round(height * maxSide / width); width = maxSide; }
+        else { width = Math.round(width * maxSide / height); height = maxSide; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    }; img.src = e.target.result; };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function removePhoto() {
+  data.basics.photo = '';
+  updatePhotoThumb();
+  render();
+}
+
+function updatePhotoThumb() {
+  const t = $('#photoThumb');
+  const has = data && data.basics.photo && data.basics.photo.length > 0;
+  t.style.display = has ? 'block' : 'none';
+  if (has) t.src = data.basics.photo;
+}
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function render() {
+  const pv = $('#preview');
+  const tpl = data.style.template;
+  const b = data.basics;
+  const hasPhoto = b.photo && b.photo.length > 0;
+  const tplCls = tpl === 'ats' ? 'resume tpl-ats' : 'resume';
+
+  let html = `<div class="${tplCls}">`;
+
+  if (tpl === 'ats') {
+    html += `<header><div class="head-main">`;
+    html += `<h1 class="name" contenteditable="true" data-basics="name">${esc(b.name)}</h1>`;
+    html += `<p class="subtitle" contenteditable="true" data-basics="title">${esc(b.title)}</p>`;
+    html += `<div class="contact"><span contenteditable="true" data-basics="phone">${esc(b.phone)}</span> ｜ <span contenteditable="true" data-basics="email">${esc(b.email)}</span> ｜ <span contenteditable="true" data-basics="location">${esc(b.location)}</span></div>`;
+    html += `</div>`;
+    if (hasPhoto) html += `<img class="photo" style="width:76px;height:100px;object-fit:cover;border-radius:2px;display:block;flex-shrink:0" src="${b.photo}">`;
+    html += `</header>`;
+  } else {
+    html += `<header>`;
+    html += `<div class="head-left">`;
+    html += `<h1 class="name" contenteditable="true" data-basics="name">${esc(b.name)}</h1>`;
+    html += `<p class="subtitle" contenteditable="true" data-basics="title">${esc(b.title)}</p>`;
+    html += `<div class="contact-inline"><span contenteditable="true" data-basics="phone">${esc(b.phone)}</span> ｜ <span contenteditable="true" data-basics="email">${esc(b.email)}</span> ｜ <span contenteditable="true" data-basics="location">${esc(b.location)}</span></div>`;
+    html += `</div>`;
+    if (hasPhoto) html += `<img class="photo" style="width:92px;height:120px;object-fit:cover;border-radius:4px;display:block;flex-shrink:0" src="${b.photo}">`;
+    html += `</header>`;
+  }
+
+  for (const sec of data.sections) {
+    if (!sec.visible) continue;
+    html += `<h2 contenteditable="true" data-sec="${sec.id}">${esc(sec.title)}</h2>`;
+    for (let i=0;i<sec.items.length;i++) {
+      const it = sec.items[i];
+      html += `<div class="item">`;
+      html += `<div class="item-head"><span contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-f="heading">${esc(it.heading)}</span>`;
+      if (it.date) html += `<span class="date" contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-f="date">${esc(it.date)}</span>`;
+      html += `</div>`;
+      if (it.subheading) html += `<div class="stack" contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-f="subheading">${esc(it.subheading)}</div>`;
+      if (it.bullets && it.bullets.length) {
+        html += `<ul>`;
+        for (let j=0;j<it.bullets.length;j++) {
+          const bl = it.bullets[j];
+          if (bl.highlight && bl.highlight.length) {
+            html += `<li><strong contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-bl="${j}" data-f="highlight">${esc(bl.highlight)}</strong>：<span contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-bl="${j}" data-f="text">${esc(bl.text)}</span></li>`;
+          } else {
+            html += `<li contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-bl="${j}" data-f="text">${esc(bl.text)}</li>`;
+          }
+        }
+        html += `</ul>`;
+      }
+      html += `</div>`;
+    }
+  }
+  html += '</div>';
+  pv.innerHTML = html;
+
+  pv.querySelectorAll('[contenteditable]').forEach(el => {
+    el.addEventListener('blur', () => commitEdit(el));
+  });
+  estimatePages();
+}
+
+function commitEdit(el) {
+  const val = el.innerText.trim();
+  if (el.dataset.basics) {
+    const k = el.dataset.basics;
+    if (data.basics && k in data.basics) data.basics[k] = val;
+    estimatePages();
+    return;
+  }
+  const secId = el.dataset.sec;
+  const itemIdx = el.dataset.item;
+  const f = el.dataset.f;
+  const sec = data.sections.find(s => s.id === secId);
+  if (!sec) return;
+  if (el.dataset.bl !== undefined) {
+    const j = +el.dataset.bl;
+    if (sec.items[itemIdx].bullets[j]) {
+      sec.items[itemIdx].bullets[j][f] = val;
+    }
+  } else if (itemIdx !== undefined) {
+    sec.items[itemIdx][f] = val;
+  } else {
+    sec.title = val;
+  }
+  estimatePages();
+}
+
+function estimatePages() {
+  const pv = $('#preview');
+  const h = pv.scrollHeight;
+  const pageH = 1123;
+  const pages = Math.max(1, Math.ceil(h / pageH));
+  const info = $('#page-info');
+  const ind = $('#page-indicator');
+  const warn = pages > 2 ? ' ⚠️ 超 2 页' : '';
+  info.textContent = `当前约 ${pages} 页${warn}`;
+  ind.textContent = `预览高度 ${Math.round(h)}px ≈ ${pages} 页`;
+  info.style.color = pages > 2 ? '#e24b4a' : 'var(--muted)';
+}
+
+function exportHTML() {
+  const s = data.style;
+  const isAts = s.template === 'ats';
+  let out = '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>' + esc(data.basics.name) + ' - 简历</title><style>';
+  out += `.resume{color:#1f2937;font-size:${s.fontSize}pt;line-height:${s.lineHeight}}`;
+  if (isAts) {
+    out += `.resume header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:2px solid #111827;padding-bottom:8px;margin-bottom:4px}`;
+    out += `.resume .name{font-size:20pt;color:#0f172a;margin:0}.resume .subtitle{color:#111827;font-weight:600;margin:2px 0 0}`;
+    out += `.resume .head-main{flex:1;min-width:0}`;
+    out += `.resume .contact{color:#4b5563;font-size:9.5pt;margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 12px}`;
+    out += `.resume .photo{width:76px;height:100px;object-fit:cover;border-radius:2px;display:block;flex-shrink:0}`;
+    out += `.resume h2{font-size:12.5pt;color:#111827;border-bottom:1px solid #cbd5e1;padding-bottom:2px;margin:${s.sectionGap}px 0 6px}`;
+    out += `.resume .date{color:#4b5563;white-space:nowrap}`;
+  } else {
+    out += `.resume header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border-bottom:3px solid ${s.accent};padding-bottom:8px}`;
+    out += `.resume .name{font-size:23pt;color:#0f172a;margin:0}.resume .subtitle{color:${s.accent};font-weight:700;margin:4px 0 0}`;
+    out += `.resume .head-left{flex:1;min-width:0}`;
+    out += `.resume .contact-inline{color:#64748b;font-size:9pt;margin-top:8px;display:flex;flex-wrap:wrap;gap:4px 12px}`;
+    out += `.resume .photo{width:92px;height:120px;object-fit:cover;border-radius:4px;display:block;flex-shrink:0}`;
+    out += `.resume h2{font-size:12.5pt;color:#155e75;margin:${s.sectionGap}px 0 6px}`;
+    out += `.resume .date{color:${s.accent};white-space:nowrap}`;
+  }
+  out += `.resume .item{margin-bottom:${s.itemGap}px}.resume .item-head{display:flex;justify-content:space-between;font-weight:700}`;
+  out += `.resume .stack{color:#64748b;font-size:9pt}`;
+  out += `.resume ul{margin:4px 0 0;padding-left:16px}.resume li{margin:${s.bulletGap}px 0}`;
+  out += `@page{size:A4;margin:${s.pagePadding}mm}`;
+  out += `</style></head><body>`;
+  const clean = $('#preview').innerHTML
+    .replace(/contenteditable="true"/g, '')
+    .replace(/ data-basics="[^"]*"/g, '')
+    .replace(/ data-sec="[^"]*"/g, '')
+    .replace(/ data-item="[^"]*"/g, '')
+    .replace(/ data-bl="[^"]*"/g, '')
+    .replace(/ data-f="[^"]*"/g, '');
+  out += clean;
+  out += '</body></html>';
+  const blob = new Blob([out], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (isAts ? '简历-微调版-ATS.html' : '简历-微调版.html');
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+async function saveBack() {
+  const r = await fetch('/save', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+  const j = await r.json();
+  alert(j.ok ? '已写回 outputs 目录' : '写回失败：' + (j.error||''));
+}
+
+load();
+</script>
+</body>
+</html>

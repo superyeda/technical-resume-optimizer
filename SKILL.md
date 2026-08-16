@@ -123,6 +123,24 @@ versions:
 - 用户提供照片路径时：用 base64 编码（png/jpg，建议压缩至 ≤200 KB、3:4 或 2:3 比例）填充模板 `{{photo_html}}`；未提供或选择不放时输出空字符串。
 - 证件照不承载关键信息，ATS 版不放照片以保兼容；现代版照片区域样式见 `assets/html-modern-template.html`。
 
+## 微调器（本地实时调整，可选）
+
+生成简历后，可启动本地微调器，让用户在浏览器里实时调整内容、字号、间距、主题色、模板与证件照，并导出或写回。
+
+1. 用 `scripts/ir_to_editor_json.py` 把当前 Resume IR 转成微调器数据 `resume.json`：
+   ```bash
+   python scripts/ir_to_editor_json.py resume_ir_v1.yaml --output <outputs>/editor/resume.json
+   ```
+   若环境无 PyYAML，可先安装到虚拟环境，或手动把 IR 的关键字段填入 `assets/editor/demo-resume.json` 的结构。
+2. 启动本地服务并告知用户链接（默认 8618）：
+   ```bash
+   python scripts/serve_resume_editor.py <skill>/assets/editor --data <outputs>/editor/resume.json --output <outputs> --port 8618
+   ```
+   服务路由：`GET /` 编辑器、`GET /resume.json` 数据、`POST /save` 写回 outputs（生成 `姓名-微调版.json/.html`）。
+3. 微调器能力：左侧滑块调字号/行高/栏目间距/条目间距/bullet 间距/页边距；主题色取色器；模板切换（现代/ATS，带真实视觉差异）；证件照上传（自动压缩至最长边 400px）与移除；点击任意文字直接编辑（含姓名/电话/邮箱/地址）；页数实时估算；导出 HTML / PDF / 写回。
+4. 默认不自动启动：在最终交付回复中告知用户「如需微调，可运行 `python scripts/serve_resume_editor.py ...` 打开微调器」，由用户决定。
+5. 微调器只改呈现层（措辞/排版/样式），不改事实；写回时在评估报告追加「用户手动微调」记录，保持可追溯。
+
 ## 资源选择
 
 - 技术岗写作与事实边界：`references/technical-resume-principles.md`
@@ -134,6 +152,7 @@ versions:
 - 增量协议：`references/incremental-update-protocol.md`
 - 岗位重点：按需读取 `references/role-profiles/*.md`
 - 模板：`assets/html-ats-single-column-template.html`、`assets/html-modern-template.html`、`assets/css/print-a4.css`
+- 微调器：`assets/editor/index.html`（编辑器页面）、`assets/editor/demo-resume.json`（示例数据）、`scripts/serve_resume_editor.py`（本地服务）、`scripts/ir_to_editor_json.py`（IR→微调器数据转换）
 
 ## 最终交付前检查
 
