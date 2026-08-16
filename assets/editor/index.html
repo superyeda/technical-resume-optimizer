@@ -61,6 +61,10 @@ input[type=color] { width: 32px; height: 24px; border: 1px solid var(--border); 
 .resume li { margin: var(--bullet-gap) 0; }
 .resume li strong { font-weight: 700; }
 
+/* ===== 职业摘要：与官方现代版模板对齐（卡片样式） ===== */
+.resume .summary { padding: 7pt 10pt; background: #f0fdfa; border-left: 3pt solid var(--accent); }
+.resume.tpl-ats .summary { padding: 0; background: transparent; border-left: none; }
+
 /* ===== 简历预览：ATS 单列版 ===== */
 .resume.tpl-ats header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-bottom: 2px solid #111827; padding-bottom: 8px; text-align: left; }
 .resume.tpl-ats .head-main { flex: 1; min-width: 0; }
@@ -255,6 +259,13 @@ function render() {
   for (const sec of data.sections) {
     if (!sec.visible) continue;
     html += `<h2 contenteditable="true" data-sec="${sec.id}">${esc(sec.title)}</h2>`;
+    if (sec.id === 'summary') {
+      const sItem = sec.items && sec.items[0];
+      const sBl = sItem && sItem.bullets && sItem.bullets[0];
+      const txt = (sBl && sBl.text) || sec.text || '';
+      html += `<div class="summary" contenteditable="true" data-sec="summary" data-item="0" data-bl="0" data-f="text">${esc(txt)}</div>`;
+      continue;
+    }
     for (let i=0;i<sec.items.length;i++) {
       const it = sec.items[i];
       html += `<div class="item">`;
@@ -303,6 +314,7 @@ function commitEdit(el) {
     const j = +el.dataset.bl;
     if (sec.items[itemIdx].bullets[j]) {
       sec.items[itemIdx].bullets[j][f] = val;
+      if (sec.id === 'summary') sec.text = val; // 同步服务端写回所用的 sec.text
     }
   } else if (itemIdx !== undefined) {
     sec.items[itemIdx][f] = val;
@@ -350,6 +362,9 @@ function exportHTML() {
   out += `.resume .item{margin-bottom:${s.itemGap}px}.resume .item-head{display:flex;justify-content:space-between;font-weight:700}`;
   out += `.resume .stack{color:#64748b;font-size:9pt}`;
   out += `.resume ul{margin:4px 0 0;padding-left:16px}.resume li{margin:${s.bulletGap}px 0}`;
+  out += isAts
+    ? `.resume .summary{padding:0;background:transparent;border-left:none}`
+    : `.resume .summary{padding:7pt 10pt;background:#f0fdfa;border-left:3pt solid ${s.accent}}`;
   out += `@page{size:A4;margin:${s.pagePadding}mm}`;
   out += `</style></head><body>`;
   const clean = $('#preview').innerHTML
