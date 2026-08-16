@@ -6,19 +6,37 @@
 <title>{{name}} - {{target_role}}</title>
 <style>
 :root { --ink:#1f2937; --muted:#64748b; --blue:#155e75; --teal:#0f766e; --soft:#f0fdfa; --line:#cbd5e1; }
-* { box-sizing:border-box; } body { margin:0; background:#f1f5f9; color:var(--ink); font:10.5pt/1.58 "Microsoft YaHei","PingFang SC",Arial,sans-serif; }
-.page { max-width:190mm; margin:14pt auto; padding:18mm 17mm; background:#fff; box-shadow:0 2pt 12pt rgba(15,23,42,.12); }
-header { display:flex; justify-content:space-between; gap:18pt; align-items:flex-end; padding:0 0 10pt; border-bottom:3pt solid var(--teal); }
-h1 { margin:0; font-size:26pt; letter-spacing:0; color:#0f172a; }.subtitle { margin:4pt 0 0; color:var(--teal); font-weight:700; }.contact { text-align:right; color:var(--muted); font-size:9.5pt; }
-h2 { margin:17pt 0 8pt; font-size:13pt; color:var(--blue); letter-spacing:0; }.summary { padding:9pt 11pt; background:var(--soft); border-left:3pt solid var(--teal); }.item { margin:10pt 0; break-inside:avoid; }.item-head { display:flex; justify-content:space-between; gap:12pt; font-weight:700; }.date { color:var(--teal); white-space:nowrap; }.stack { margin-top:2pt; color:var(--muted); font-size:9.5pt; }ul { margin:5pt 0; padding-left:17pt; }li { margin:3pt 0; }.skill { margin:3pt 0; }.label { color:var(--blue); font-weight:700; display:inline-block; min-width:84pt; }
-@page { size:A4; margin:14mm 15mm; } @media print { body{background:#fff}.page{margin:0;padding:0;box-shadow:none;max-width:none}.item,h2{break-inside:avoid;page-break-inside:avoid} }
+* { box-sizing:border-box; } body { margin:0; background:#f1f5f9; color:var(--ink); font:10pt/1.5 "Microsoft YaHei","PingFang SC",Arial,sans-serif; }
+.page { max-width:190mm; margin:12pt auto; padding:15mm 16mm; background:#fff; box-shadow:0 2pt 12pt rgba(15,23,42,.12); }
+header { display:flex; justify-content:space-between; gap:16pt; align-items:flex-start; padding:0 0 8pt; border-bottom:3pt solid var(--teal); }
+.head-left h1 { margin:0; font-size:23pt; letter-spacing:0; color:#0f172a; }
+.head-left .subtitle { margin:4pt 0 0; color:var(--teal); font-weight:700; }
+.head-right { display:flex; flex-direction:column; align-items:flex-end; gap:6pt; }
+.photo-img { width:92pt; height:120pt; object-fit:cover; border-radius:4pt; border:1pt solid var(--line); display:block; }
+.contact { text-align:right; color:var(--muted); font-size:9pt; }
+h2 { margin:13pt 0 6pt; font-size:12.5pt; color:var(--blue); letter-spacing:0; }
+.summary { padding:7pt 10pt; background:var(--soft); border-left:3pt solid var(--teal); }
+.item { margin:8pt 0; break-inside:avoid; }
+.item-head { display:flex; justify-content:space-between; gap:12pt; font-weight:700; }
+.date { color:var(--teal); white-space:nowrap; }
+.stack { margin-top:2pt; color:var(--muted); font-size:9pt; }
+ul { margin:4pt 0; padding-left:16pt; } li { margin:2.5pt 0; }
+.skill { margin:3pt 0; } .label { color:var(--blue); font-weight:700; display:inline-block; min-width:80pt; }
+.print-btn { position:fixed; right:22px; bottom:22px; z-index:99; background:var(--teal); color:#fff; border:none; border-radius:999px; padding:10px 18px; font-size:13px; cursor:pointer; font-family:inherit; box-shadow:0 4px 14px rgba(15,23,42,.3); }
+.print-btn:hover { filter:brightness(1.12); }
+@page { size:A4; margin:12mm 14mm; }
+@media print { body{background:#fff}.page{margin:0;padding:0;box-shadow:none;max-width:none}.print-btn{display:none !important}.item,h2{break-inside:avoid;page-break-inside:avoid} }
 </style>
 </head>
 <body>
+<button class="print-btn" onclick="window.print()">导出 PDF</button>
 <main class="page">
   <header>
-    <div><h1>{{name}}</h1><p class="subtitle">{{target_role}}</p></div>
-    <div class="contact">{{phone}}<br>{{email}}<br>{{location}}</div>
+    <div class="head-left"><h1>{{name}}</h1><p class="subtitle">{{target_role}}</p></div>
+    <div class="head-right">
+      {{photo_html}}
+      <div class="contact">{{phone}}<br>{{email}}<br>{{location}}</div>
+    </div>
   </header>
   <section><h2>职业摘要</h2><div class="summary">{{summary}}</div></section>
   <section><h2>实习 / 工作经历</h2>{{experience_items}}</section>

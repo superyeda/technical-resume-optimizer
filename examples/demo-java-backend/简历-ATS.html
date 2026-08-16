@@ -7,23 +7,29 @@
 <style>
 :root { --ink:#111827; --muted:#4b5563; --line:#d1d5db; --accent:#1d4ed8; }
 * { box-sizing:border-box; }
-body { margin:0; background:#fff; color:var(--ink); font:10.5pt/1.58 "Microsoft YaHei","PingFang SC",Arial,sans-serif; }
+body { margin:0; background:#fff; color:var(--ink); font:10pt/1.5 "Microsoft YaHei","PingFang SC",Arial,sans-serif; }
 .page { width:100%; max-width:180mm; margin:0 auto; }
-h1 { margin:0; font-size:23pt; letter-spacing:0; }
-h2 { margin:16pt 0 7pt; padding-bottom:3pt; border-bottom:1pt solid var(--accent); font-size:13pt; color:var(--accent); }
-p { margin:4pt 0; }.muted { color:var(--muted); }.header { border-bottom:2pt solid var(--accent); padding-bottom:8pt; }
+h1 { margin:0; font-size:21pt; letter-spacing:0; }
+h2 { margin:13pt 0 6pt; padding-bottom:3pt; border-bottom:1pt solid var(--accent); font-size:12.5pt; color:var(--accent); }
+p { margin:4pt 0; }.muted { color:var(--muted); }.header { border-bottom:2pt solid var(--accent); padding-bottom:7pt; }
 .meta { margin-top:3pt; color:var(--muted); }.role { margin-top:6pt; font-weight:700; }
-.item { margin:9pt 0; break-inside:avoid; }.item-title { font-weight:700; }.date { float:right; color:var(--muted); }
-ul { margin:4pt 0 0; padding-left:18pt; }li { margin:3pt 0; }.stack { color:var(--muted); font-size:9.5pt; }
-.skills p { margin:3pt 0; }.label { display:inline-block; min-width:80pt; font-weight:700; }
-@page { size:A4; margin:14mm 15mm; }
-@media print { .page{max-width:none}.item,h2{break-inside:avoid;page-break-inside:avoid} }
+.photo-wrap { margin:6pt 0 0; }
+.photo-img { width:72pt; height:96pt; object-fit:cover; border:1pt solid var(--line); display:block; }
+.item { margin:7pt 0; break-inside:avoid; }.item-title { font-weight:700; }.date { float:right; color:var(--muted); }
+ul { margin:4pt 0 0; padding-left:18pt; }li { margin:2.5pt 0; }.stack { color:var(--muted); font-size:9pt; }
+.skills p { margin:3pt 0; }.label { display:inline-block; min-width:76pt; font-weight:700; }
+.print-btn { position:fixed; right:22px; bottom:22px; z-index:99; background:var(--accent); color:#fff; border:none; border-radius:999px; padding:10px 18px; font-size:13px; cursor:pointer; font-family:inherit; box-shadow:0 4px 14px rgba(15,23,42,.3); }
+.print-btn:hover { filter:brightness(1.12); }
+@page { size:A4; margin:12mm 14mm; }
+@media print { .page{max-width:none}.item,h2{break-inside:avoid;page-break-inside:avoid}.print-btn{display:none !important} }
 </style>
 </head>
 <body>
+<button class="print-btn" onclick="window.print()">导出 PDF</button>
 <main class="page">
   <header class="header">
     <h1>张三</h1>
+    
     <p class="meta">18888888888 ｜ 123@qq.com ｜ 北京 / 上海 / 深圳 / 广州 / 杭州</p>
     <p class="role">求职意向：Java 后端开发工程师（校招应届生，2027 届硕士）</p>
   </header>
