@@ -21,6 +21,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -32,6 +33,10 @@ DEFAULT_EDITOR_DIR = SCRIPT_DIR.parent / "assets" / "editor"
 def esc(v):
     return (v or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
+def md_bold(v):
+    """Convert markdown **bold** markers in inline text to <strong>."""
+    return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", esc(v))
+
 
 def render_items_html(items: list, kind: str) -> str:
     """Render section items into the template's item HTML fragments.
@@ -42,7 +47,7 @@ def render_items_html(items: list, kind: str) -> str:
         for it in items:
             for bl in it.get("bullets", []):
                 hl = esc(bl.get("highlight", ""))
-                txt = esc(bl.get("text", ""))
+                txt = md_bold(bl.get("text", ""))
                 out.append(f"<p class='skill'><span class='label'>{hl}</span>{txt}</p>")
         return "\n".join(out)
 
@@ -50,10 +55,12 @@ def render_items_html(items: list, kind: str) -> str:
         heading = esc(it.get("heading", ""))
         date = esc(it.get("date", ""))
         sub = esc(it.get("subheading", ""))
-        parts = [f"<div class='item'><div class='item-head'><span>{heading}</span>"]
-        if date:
-            parts.append(f"<span class='date'>{date}</span>")
-        parts.append("</div>")
+        parts = []
+        if heading or date:
+            parts.append(f"<div class='item-head'><span>{heading}</span>")
+            if date:
+                parts.append(f"<span class='date'>{date}</span>")
+            parts.append("</div>")
         if sub:
             parts.append(f"<div class='stack'>{sub}</div>")
         bls = it.get("bullets") or []
@@ -61,7 +68,7 @@ def render_items_html(items: list, kind: str) -> str:
             parts.append("<ul>")
             for bl in bls:
                 hl = esc(bl.get("highlight", ""))
-                txt = esc(bl.get("text", ""))
+                txt = md_bold(bl.get("text", ""))
                 if hl:
                     parts.append(f"<li><strong>{hl}</strong>：{txt}</li>")
                 else:
@@ -94,7 +101,7 @@ def build_html(resume: dict) -> str:
     proj_html = render_items_html((sections.get("projects") or {}).get("items", []), "project")
     exp_html = render_items_html((sections.get("experiences") or {}).get("items", []), "experience")
     edu_html = render_items_html((sections.get("education") or {}).get("items", []), "education")
-    summary_html = esc((sections.get("summary") or {}).get("text", ""))
+    summary_html = md_bold((sections.get("summary") or {}).get("text", ""))
 
     photo = b.get("photo") or ""
     photo_html = f"<img class='photo-img' src='{photo}' alt=''>" if photo else ""

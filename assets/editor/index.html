@@ -238,6 +238,7 @@ function updatePhotoThumb() {
 }
 
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function mdBold(s) { return (s||'').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); }
 
 function render() {
   const pv = $('#preview');
@@ -274,24 +275,26 @@ function render() {
       const sItem = sec.items && sec.items[0];
       const sBl = sItem && sItem.bullets && sItem.bullets[0];
       const txt = (sBl && sBl.text) || sec.text || '';
-      html += `<div class="summary" contenteditable="true" data-sec="summary" data-item="0" data-bl="0" data-f="text">${esc(txt)}</div>`;
+      html += `<div class="summary" contenteditable="true" data-sec="summary" data-item="0" data-bl="0" data-f="text">${mdBold(esc(txt))}</div>`;
       continue;
     }
     for (let i=0;i<sec.items.length;i++) {
       const it = sec.items[i];
       html += `<div class="item">`;
-      html += `<div class="item-head"><span contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-f="heading">${esc(it.heading)}</span>`;
-      if (it.date) html += `<span class="date" contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-f="date">${esc(it.date)}</span>`;
-      html += `</div>`;
+      if (it.heading || it.date) {
+        html += `<div class="item-head"><span contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-f="heading">${esc(it.heading)}</span>`;
+        if (it.date) html += `<span class="date" contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-f="date">${esc(it.date)}</span>`;
+        html += `</div>`;
+      }
       if (it.subheading) html += `<div class="stack" contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-f="subheading">${esc(it.subheading)}</div>`;
       if (it.bullets && it.bullets.length) {
         html += `<ul>`;
         for (let j=0;j<it.bullets.length;j++) {
           const bl = it.bullets[j];
           if (bl.highlight && bl.highlight.length) {
-            html += `<li><strong contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-bl="${j}" data-f="highlight">${esc(bl.highlight)}</strong>：<span contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-bl="${j}" data-f="text">${esc(bl.text)}</span></li>`;
+            html += `<li><strong contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-bl="${j}" data-f="highlight">${esc(bl.highlight)}</strong>：<span contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-bl="${j}" data-f="text">${mdBold(esc(bl.text))}</span></li>`;
           } else {
-            html += `<li contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-bl="${j}" data-f="text">${esc(bl.text)}</li>`;
+            html += `<li contenteditable="true" data-sec="${sec.id}" data-item="${i}" data-bl="${j}" data-f="text">${mdBold(esc(bl.text))}</li>`;
           }
         }
         html += `</ul>`;
@@ -323,9 +326,13 @@ function commitEdit(el) {
   if (!sec) return;
   if (el.dataset.bl !== undefined) {
     const j = +el.dataset.bl;
-    if (sec.items[itemIdx].bullets[j]) {
-      sec.items[itemIdx].bullets[j][f] = val;
-      if (sec.id === 'summary') sec.text = val; // 同步服务端写回所用的 sec.text
+    const bl = sec.items[itemIdx] && sec.items[itemIdx].bullets[j];
+    if (bl) {
+      const prev = bl[f] || '';
+      const stripped = prev.replace(/\*\*/g, '');
+      // 用户仅点入未改动时，保留原 ** 加粗标记
+      if (!(f === 'text' && val === stripped)) bl[f] = val;
+      if (sec.id === 'summary') sec.text = bl.text; // 同步服务端写回所用的 sec.text
     }
   } else if (itemIdx !== undefined) {
     sec.items[itemIdx][f] = val;
