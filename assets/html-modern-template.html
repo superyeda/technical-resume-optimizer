@@ -11,6 +11,7 @@
 header { display:flex; justify-content:space-between; gap:16pt; align-items:flex-start; padding:0 0 8pt; border-bottom:3pt solid var(--teal); }
 .head-left h1 { margin:0; font-size:23pt; letter-spacing:0; color:#0f172a; }
 .head-left .subtitle { margin:4pt 0 0; color:var(--teal); font-weight:700; }
+.head-left .contact-inline { text-align:left; color:var(--muted); font-size:9pt; margin-top:8pt; }
 .head-right { display:flex; flex-direction:column; align-items:flex-end; gap:6pt; }
 .photo-img { width:92pt; height:120pt; object-fit:cover; border-radius:4pt; border:1pt solid var(--line); display:block; }
 .contact { text-align:right; color:var(--muted); font-size:9pt; }
@@ -32,11 +33,8 @@ ul { margin:4pt 0; padding-left:16pt; } li { margin:2.5pt 0; }
 <button class="print-btn" onclick="window.print()">导出 PDF</button>
 <main class="page">
   <header>
-    <div class="head-left"><h1>{{name}}</h1><p class="subtitle">{{target_role}}</p></div>
-    <div class="head-right">
-      {{photo_html}}
-      <div class="contact">{{phone}}<br>{{email}}<br>{{location}}</div>
-    </div>
+    <div class="head-left"><h1>{{name}}</h1><p class="subtitle">{{target_role}}</p><div class="contact-inline">{{phone}}<br>{{email}}<br>{{location}}</div></div>
+    <div class="head-right">{{photo_html}}</div>
   </header>
   <section><h2>职业摘要</h2><div class="summary">{{summary}}</div></section>
   <section><h2>实习 / 工作经历</h2>{{experience_items}}</section>

@@ -11,8 +11,11 @@ body { margin:0; background:#fff; color:var(--ink); font:10pt/1.5 "Microsoft YaH
 .page { width:100%; max-width:180mm; margin:0 auto; }
 h1 { margin:0; font-size:21pt; letter-spacing:0; }
 h2 { margin:13pt 0 6pt; padding-bottom:3pt; border-bottom:1pt solid var(--accent); font-size:12.5pt; color:var(--accent); }
-p { margin:4pt 0; }.muted { color:var(--muted); }.header { border-bottom:2pt solid var(--accent); padding-bottom:7pt; }
-.meta { margin-top:3pt; color:var(--muted); }.role { margin-top:6pt; font-weight:700; }
+p { margin:4pt 0; }.muted { color:var(--muted); }.header { display:flex; justify-content:space-between; align-items:flex-start; gap:16pt; border-bottom:2px solid var(--accent); padding-bottom:7pt; }
+.header h1 { font-size:21pt; }
+.header .head-main { flex:1; min-width:0; }
+.header .meta { margin-top:3pt; color:var(--muted); }
+.header .role { margin-top:6pt; font-weight:700; }
 .photo-wrap { margin:6pt 0 0; }
 .photo-img { width:72pt; height:96pt; object-fit:cover; border:1pt solid var(--line); display:block; }
 .item { margin:7pt 0; break-inside:avoid; }.item-title { font-weight:700; }.date { float:right; color:var(--muted); }
@@ -28,10 +31,12 @@ ul { margin:4pt 0 0; padding-left:18pt; }li { margin:2.5pt 0; }.stack { color:va
 <button class="print-btn" onclick="window.print()">导出 PDF</button>
 <main class="page">
   <header class="header">
-    <h1>{{name}}</h1>
+    <div class="head-main">
+      <h1>{{name}}</h1>
+      <p class="role">求职意向：{{target_role}}</p>
+      <p class="meta">{{phone}} ｜ {{email}} ｜ {{location}}</p>
+    </div>
     {{photo_html}}
-    <p class="meta">{{phone}} ｜ {{email}} ｜ {{location}}</p>
-    <p class="role">求职意向：{{target_role}}</p>
   </header>
   <section><h2>职业摘要</h2><p>{{summary}}</p></section>
   <section><h2>实习 / 工作经历</h2>{{experience_items}}</section>

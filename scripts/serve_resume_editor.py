@@ -29,89 +29,112 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_EDITOR_DIR = SCRIPT_DIR.parent / "assets" / "editor"
 
 
+def esc(v):
+    return (v or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def render_items_html(items: list, kind: str) -> str:
+    """Render section items into the template's item HTML fragments.
+    kind: experience | project | skill | education
+    """
+    out = []
+    if kind == "skill":
+        for it in items:
+            for bl in it.get("bullets", []):
+                hl = esc(bl.get("highlight", ""))
+                txt = esc(bl.get("text", ""))
+                out.append(f"<p class='skill'><span class='label'>{hl}</span>{txt}</p>")
+        return "\n".join(out)
+
+    for it in items:
+        heading = esc(it.get("heading", ""))
+        date = esc(it.get("date", ""))
+        sub = esc(it.get("subheading", ""))
+        parts = [f"<div class='item'><div class='item-head'><span>{heading}</span>"]
+        if date:
+            parts.append(f"<span class='date'>{date}</span>")
+        parts.append("</div>")
+        if sub:
+            parts.append(f"<div class='stack'>{sub}</div>")
+        bls = it.get("bullets") or []
+        if bls:
+            parts.append("<ul>")
+            for bl in bls:
+                hl = esc(bl.get("highlight", ""))
+                txt = esc(bl.get("text", ""))
+                if hl:
+                    parts.append(f"<li><strong>{hl}</strong>：{txt}</li>")
+                else:
+                    parts.append(f"<li>{txt}</li>")
+            parts.append("</ul>")
+        parts.append("</div>")
+        out.append("".join(parts))
+    return "\n".join(out)
+
+
 def build_html(resume: dict) -> str:
-    """Render a final resume HTML from the structured resume JSON."""
+    """Render a final resume HTML by filling the official templates.
+
+    Unlike the earlier inline-CSS version, this reads the same template files
+    (assets/html-*-template.html) used by the skill's normal generation, so the
+    micro-adjusted output is visually identical to the delivered static HTML.
+    """
     b = resume.get("basics", {})
     s = resume.get("style", {})
-    accent = s.get("accent", "#0f766e")
     is_ats = s.get("template") == "ats"
+    tpl_name = "html-ats-single-column-template.html" if is_ats else "html-modern-template.html"
+    tpl_path = SCRIPT_DIR.parent / "assets" / tpl_name
+    if not tpl_path.is_file():
+        raise RuntimeError(f"模板不存在：{tpl_path}")
+    html = tpl_path.read_text(encoding="utf-8")
 
-    def esc(v):
-        return (v or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    # 1) 按 section id 映射到模板栏目
+    sections = {sec.get("id"): sec for sec in resume.get("sections", [])}
+    skill_html = render_items_html((sections.get("skills") or {}).get("items", []), "skill")
+    proj_html = render_items_html((sections.get("projects") or {}).get("items", []), "project")
+    exp_html = render_items_html((sections.get("experiences") or {}).get("items", []), "experience")
+    edu_html = render_items_html((sections.get("education") or {}).get("items", []), "education")
+    summary_html = esc((sections.get("summary") or {}).get("text", ""))
 
-    lines = []
-    lines.append("<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'>")
-    lines.append(f"<title>{esc(b.get('name',''))} - 简历</title>")
-    lines.append("<style>")
-    lines.append(f".resume{{color:#1f2937;font-size:{s.get('fontSize',10)}pt;line-height:{s.get('lineHeight',1.5)}}}")
-    if is_ats:
-        lines.append(".resume header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:2px solid #111827;padding-bottom:8px;margin-bottom:4px}")
-        lines.append(".resume .head-main{flex:1;min-width:0}")
-        lines.append(".resume .name{font-size:20pt;color:#0f172a;margin:0}")
-        lines.append(".resume .subtitle{color:#111827;font-weight:600;margin:2px 0 0}")
-        lines.append(".resume .contact{color:#4b5563;font-size:9.5pt;margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 12px}")
-        lines.append(".resume .photo{width:76px;height:100px;object-fit:cover;border-radius:2px;display:block;flex-shrink:0}")
-        lines.append(".resume h2{font-size:12.5pt;color:#111827;border-bottom:1px solid #cbd5e1;padding-bottom:2px;margin:13px 0 6px}")
-        lines.append(".resume .date{color:#4b5563;white-space:nowrap}")
-    else:
-        lines.append(f".resume header{{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border-bottom:3px solid {accent};padding-bottom:8px}}")
-        lines.append(".resume .head-left{flex:1;min-width:0}")
-        lines.append(".resume .name{font-size:23pt;color:#0f172a;margin:0}")
-        lines.append(f".resume .subtitle{{color:{accent};font-weight:700;margin:4px 0 0}}")
-        lines.append(".resume .contact-inline{color:#64748b;font-size:9pt;margin-top:8px;display:flex;flex-wrap:wrap;gap:4px 12px}")
-        lines.append(".resume .photo{width:92px;height:120px;object-fit:cover;border-radius:4px;display:block;flex-shrink:0}")
-        lines.append(".resume h2{font-size:12.5pt;color:#155e75;margin:13px 0 6px}")
-        lines.append(f".resume .date{{color:{accent};white-space:nowrap}}")
-    lines.append(".resume .item{margin-bottom:8px}.resume .item-head{display:flex;justify-content:space-between;font-weight:700}")
-    lines.append(".resume .stack{color:#64748b;font-size:9pt}")
-    lines.append(".resume ul{margin:4px 0 0;padding-left:16px}.resume li{margin:3px 0}")
-    lines.append(f"@page{{size:A4;margin:{s.get('pagePadding',15)}mm}}")
-    lines.append("</style></head><body>")
+    photo = b.get("photo") or ""
+    photo_html = f"<img class='photo-img' src='{photo}' alt=''>" if photo else ""
 
-    has_photo = b.get("photo")
-    lines.append("<div class='resume'>")
-    if is_ats:
-        lines.append("<header>")
-        lines.append("<div class='head-main'>")
-        lines.append(f"<h1 class='name'>{esc(b.get('name'))}</h1><p class='subtitle'>{esc(b.get('title'))}</p>")
-        lines.append(f"<div class='contact'>{esc(b.get('phone'))} ｜ {esc(b.get('email'))} ｜ {esc(b.get('location'))}</div>")
-        lines.append("</div>")
-        if has_photo:
-            lines.append(f"<img class='photo' src='{b.get('photo')}'>")
-        lines.append("</header>")
-    else:
-        lines.append("<header>")
-        lines.append("<div class='head-left'>")
-        lines.append(f"<h1 class='name'>{esc(b.get('name'))}</h1><p class='subtitle'>{esc(b.get('title'))}</p>")
-        lines.append(f"<div class='contact-inline'>{esc(b.get('phone'))} ｜ {esc(b.get('email'))} ｜ {esc(b.get('location'))}</div>")
-        lines.append("</div>")
-        if has_photo:
-            lines.append(f"<img class='photo' src='{b.get('photo')}'>")
-        lines.append("</header>")
+    repl = {
+        "{{name}}": esc(b.get("name", "")),
+        "{{target_role}}": esc(b.get("title", "")),
+        "{{phone}}": esc(b.get("phone", "")),
+        "{{email}}": esc(b.get("email", "")),
+        "{{location}}": esc(b.get("location", "")),
+        "{{photo_html}}": photo_html,
+        "{{summary}}": summary_html,
+        "{{experience_items}}": exp_html,
+        "{{project_items}}": proj_html,
+        "{{skill_items}}": skill_html,
+        "{{education_items}}": edu_html,
+    }
+    for k, v in repl.items():
+        html = html.replace(k, v)
 
-    for sec in resume.get("sections", []):
-        if not sec.get("visible", True):
-            continue
-        lines.append(f"<h2>{esc(sec.get('title'))}</h2>")
-        for it in sec.get("items", []):
-            lines.append("<div class='item'>")
-            head = f"<span>{esc(it.get('heading'))}</span>"
-            if it.get("date"):
-                head += f"<span class='date'>{esc(it.get('date'))}</span>"
-            lines.append(f"<div class='item-head'>{head}</div>")
-            if it.get("subheading"):
-                lines.append(f"<div class='stack'>{esc(it.get('subheading'))}</div>")
-            if it.get("bullets"):
-                lines.append("<ul>")
-                for bl in it["bullets"]:
-                    if bl.get("highlight"):
-                        lines.append(f"<li><strong>{esc(bl['highlight'])}</strong>：{esc(bl.get('text',''))}</li>")
-                    else:
-                        lines.append(f"<li>{esc(bl.get('text',''))}</li>")
-                lines.append("</ul>")
-            lines.append("</div>")
-    lines.append("</div></body></html>")
-    return "\n".join(lines)
+    # 2) 注入微调样式参数（字号/行高/间距/主题色/页边距）
+    accent = s.get("accent", "#1d4ed8" if is_ats else "#0f766e")
+    fs = s.get("fontSize", 10)
+    lh = s.get("lineHeight", 1.5)
+    sec_gap = s.get("sectionGap", 13)
+    item_gap = s.get("itemGap", 8)
+    bl_gap = s.get("bulletGap", 3)
+    pad = s.get("pagePadding", 15)
+    style_override = (
+        f"<style>"
+        f":root{{--accent:{accent};--teal:{accent};}}"
+        f"body{{font:{fs}pt/{lh} \"Microsoft YaHei\",\"PingFang SC\",Arial,sans-serif;}}"
+        f"h2{{margin:{sec_gap}pt 0 6pt;}}"
+        f".item{{margin:{item_gap}pt 0;}}"
+        f"li{{margin:{bl_gap}pt 0;}}"
+        f"@page{{size:A4;margin:{pad}mm;}}"
+        f"</style>"
+    )
+    html = html.replace("</head>", style_override + "</head>")
+    return html
 
 
 class Handler(BaseHTTPRequestHandler):
